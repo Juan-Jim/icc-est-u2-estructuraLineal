@@ -1,97 +1,103 @@
 package controllers;
 
 import java.util.NoSuchElementException;
-import models.NodeGeneric;
 import models.Persona;
 
-public class QueueG<T extends Persona> {
+public class QueueG<T> {
+    private Nodo<T> primero;
+    private Nodo<T> ultimo;
 
-    private NodeGeneric<T> primero;
-    private NodeGeneric<T> ultimo;
-    private int size;
+    private static class Nodo<T> {
+        T valor;
+        Nodo<T> siguiente;
+
+        Nodo(T valor) {
+            this.valor = valor;
+            this.siguiente = null;
+        }
+    }
 
     public QueueG() {
-        this.primero = null;
-        this.ultimo = null;
-        this.size = 0;
-    }
-
-    public void add(T value) {
-        NodeGeneric<T> nuevo = new NodeGeneric<>(value);
-        if (isEmpty()) {
-            primero = ultimo = nuevo;
-        } else {
-            ultimo.setNext(nuevo);
-            ultimo = nuevo;
-        }
-        size++;
-    }
-
-    public T remove() {
-        if (isEmpty()) throw new NoSuchElementException("La cola está vacía");
-        T aux = primero.getValue();
-        primero = primero.getNext();
-        if (primero == null) ultimo = null;
-        size--;
-        return aux;
-    }
-
-    public T peek() {
-        if (isEmpty()) throw new NoSuchElementException("La cola está vacía");
-        return primero.getValue();
+        primero = null;
+        ultimo = null;
     }
 
     public boolean isEmpty() {
         return primero == null;
     }
 
-    public int size() {
-        return size;
+    public void add(T valor) {
+        Nodo<T> nuevo = new Nodo<>(valor);
+        if (isEmpty()) {
+            primero = nuevo;
+            ultimo = nuevo;
+        } else {
+            ultimo.siguiente = nuevo;
+            ultimo = nuevo;
+        }
+    }
+
+    public T remove() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("La cola está vacía");
+        }
+        T valor = primero.valor;
+        primero = primero.siguiente;
+        if (primero == null) {
+            ultimo = null;
+        }
+        return valor;
     }
 
     public void printCola() {
-        NodeGeneric<T> aux = primero;
+        Nodo<T> aux = primero;
+        System.out.print("Cola: ");
         while (aux != null) {
-            System.out.print(aux.getValue() + " | ");
-            aux = aux.getNext();
+            System.out.print(aux.valor + " | ");
+            aux = aux.siguiente;
         }
         System.out.println();
     }
 
-    public T findByName(String nombre) {
-        NodeGeneric<T> aux = primero;
-        while (aux != null) {
-            if (aux.getValue().getNombre().equalsIgnoreCase(nombre)) {
-                return aux.getValue();
+    public Persona findByName(String nombre) {
+        Nodo<T> actual = primero;
+        while (actual != null) {
+            if (actual.valor instanceof Persona) {
+                Persona persona = (Persona) actual.valor;
+                if (persona.getNombre().equalsIgnoreCase(nombre)) {
+                    return persona;
+                }
             }
-            aux = aux.getNext();
+            actual = actual.siguiente;
         }
         return null;
     }
 
-    public T deleteByName(String nombre) {
-        NodeGeneric<T> aux = primero;
-        NodeGeneric<T> prev = null;
+    public Persona deleteByName(String nombre) {
+        Nodo<T> actual = primero;
+        Nodo<T> anterior = null;
 
-        while (aux != null) {
-            if (aux.getValue().getNombre().equalsIgnoreCase(nombre)) {
-                if (prev == null) {
-                    
-                    primero = aux.getNext();
-                    if (primero == null) ultimo = null;
-                } else {
-                    prev.setNext(aux.getNext());
-                    if (aux == ultimo) {
-                        ultimo = prev;
+        while (actual != null) {
+            if (actual.valor instanceof Persona) {
+                Persona persona = (Persona) actual.valor;
+                if (persona.getNombre().equalsIgnoreCase(nombre)) {
+                    if (anterior == null) {
+                        primero = actual.siguiente;
+                        if (primero == null) {
+                            ultimo = null;
+                        }
+                    } else {
+                        anterior.siguiente = actual.siguiente;
+                        if (actual == ultimo) {
+                            ultimo = anterior;
+                        }
                     }
+                    return persona;
                 }
-                size--;
-                return aux.getValue();
             }
-            prev = aux;
-            aux = aux.getNext();
+            anterior = actual;
+            actual = actual.siguiente;
         }
-
-        return null; 
+        return null;
     }
 }

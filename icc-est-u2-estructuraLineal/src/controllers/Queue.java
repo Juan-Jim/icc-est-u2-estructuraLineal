@@ -35,8 +35,8 @@ public class Queue {
         }
         int aux = primero.getValue();
         primero = primero.getNext();
-        return aux;
         size--;
+        return aux;
     }
 
     public int size() {

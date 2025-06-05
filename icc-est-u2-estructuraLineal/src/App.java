@@ -45,10 +45,10 @@ public class App {
         colaPersonas.printCola();
         System.out.println("Persona antendida -> " + colaPersonas.remove());
         colaPersonas.printCola();
-        Persona pB = colaPersonas.findByName("juan");
-        System.out.println("Persona encontrada -> " + pB  != null? pB : "ninguna");
+        Persona pB = colaPersonas.findByName("Juan");
+        System.out.println(pB != null ? "Personas encontrada -> " + pB : "Persona no encontrada");
         Persona pE = colaPersonas.deleteByName("Pedro");
-        System.out.println("Persona eliminada -> " + pE  != null ? pE : "ninguna");
+        System.out.println(pE != null ? "Persona eliminada -> " + pE : "Persona no eliminada");
         colaPersonas.printCola();
 
 
